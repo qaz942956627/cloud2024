@@ -5,16 +5,19 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
 public class OrderCircuitController {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(OrderCircuitController.class);
     @Resource
     private PayFeignApi payFeignApi;
 
@@ -49,17 +52,15 @@ public class OrderCircuitController {
     @GetMapping(value = "/feign/pay/bulkhead/{id}")
     @Bulkhead(name = "cloud-payment-service", fallbackMethod = "myBulkheadPoolFallback", type = Bulkhead.Type.THREADPOOL)
     public CompletableFuture<String> myBulkheadTHREADPOOL(@PathVariable("id") Integer id) {
-        System.out.println(Thread.currentThread().getName() + "\t" + "enter the method!!!");
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(Thread.currentThread().getName() + "\t" + "exist the method!!!");
+        LOGGER.info("{}\tenter the method!!!", Thread.currentThread().getName());
 
-        log.info("进入supplyAsync方法之前");
+        LOGGER.info("{}\texist the method!!!", Thread.currentThread().getName());
+
+        LOGGER.info("进入supplyAsync方法之前");
+        LOGGER.info(Thread.currentThread().getName());
+        LOGGER.info(Thread.currentThread().getName());
         return CompletableFuture.supplyAsync(() -> {
-            log.info("进入supplyAsync方法");
+            LOGGER.info("进入supplyAsync方法");
             return payFeignApi.myBulkhead(id) + "\t" + " Bulkhead.Type.THREADPOOL";
         });
     }
