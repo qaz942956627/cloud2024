@@ -35,7 +35,7 @@ spring:
           enabled: true
           # 开启circuitbreaker和分组激活 spring.cloud.openfeign.circuitbreaker.enabled
       circuitbreaker:
-        enabled: true
+        enabled: false
         group:
           enabled: false #没开分组永远不用分组的配置。精确优先、分组次之(开了分组)、默认最后
 
@@ -53,7 +53,7 @@ logging:
 #  6次访问中当执行方法的失败率达到50%时CircuitBreaker将进入开启OPEN状态(保险丝跳闸断电)拒绝所有请求。
 #  等待5秒后，CircuitBreaker 将自动从开启OPEN状态过渡到半开HALF_OPEN状态，允许一些请求通过以测试服务是否恢复正常。
 #  如还是异常CircuitBreaker 将重新进入开启OPEN状态；如正常将进入关闭CLOSE闭合状态恢复正常处理请求。
-resilience4j:
+#resilience4j:
 #  circuitbreaker:
 #    configs:
 #      default:
@@ -102,12 +102,20 @@ resilience4j:
 #        baseConfig: default
 # spring.cloud.openfeign.circuitbreaker.group.enabled 请设置为false 新启线程和原来主线程脱离
 ####resilience4j ratelimiter 限流的例子
-  ratelimiter:
-    configs:
-      default:
-        limitForPeriod: 2 #在一次刷新周期内，允许执行的最大请求数
-        limitRefreshPeriod: 1s # 限流器每隔limitRefreshPeriod刷新一次，将允许处理的最大请求数量重置为limitForPeriod
-        timeout-duration: 1 # 线程等待权限的默认等待时间
-    instances:
-      cloud-payment-service:
-        baseConfig: default
+#  ratelimiter:
+#    configs:
+#      default:
+#        limitForPeriod: 2 #在一次刷新周期内，允许执行的最大请求数
+#        limitRefreshPeriod: 1s # 限流器每隔limitRefreshPeriod刷新一次，将允许处理的最大请求数量重置为limitForPeriod
+#        timeout-duration: 1 # 线程等待权限的默认等待时间
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+# zipkin图形展现地址和采样率设置
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0 #采样率默认为0.1(0.1就是10次只能有一次被记录下来)，值越大收集越及时。
