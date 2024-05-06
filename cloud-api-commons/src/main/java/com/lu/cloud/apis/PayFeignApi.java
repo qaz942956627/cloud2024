@@ -62,4 +62,19 @@ public interface PayFeignApi {
 
     @GetMapping(value = "/pay/micrometer/{id}")
     String myMicrometer(@PathVariable("id") Integer id);
+
+    /**
+     * GateWay进行网关测试案例01
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/pay/gateway/get/{id}")
+    ResultData getById(@PathVariable("id") Integer id);
+
+    /**
+     * GateWay进行网关测试案例02
+     * @return
+     */
+    @GetMapping(value = "/pay/gateway/info")
+    ResultData<String> getGatewayInfo();
 }
